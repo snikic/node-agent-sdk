@@ -10,13 +10,17 @@
 
 const CloseConversationBot = require('./close-conversation-bot');
 
-const conf = {
-    accountId: process.env.LP_ACCOUNT,
-    username: process.env.LP_USER,
-    password: process.env.LP_PASS
+const qaConf = {
+    accountId: 'le45999744',
+    username: 'bulkClose',
+    password: '***',
+    csdsDomain: 'hc1n.dev.lprnd.net'
 };
-if (process.env.LP_CSDS) {
-    conf.csdsDomain = process.env.LP_CSDS;
-}
+const alphaConf = {
+    accountId: '32950771',
+    username: 'sasatest',
+    password: '***',
+    csdsDomain: 'api.liveperson.net'
+};
 
-const echoAgent = new CloseConversationBot(conf);
+const echoAgent = new CloseConversationBot(alphaConf);

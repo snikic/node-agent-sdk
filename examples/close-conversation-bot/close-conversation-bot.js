@@ -9,6 +9,8 @@
  */
 
 const Agent = require('./../../lib/AgentSDK');
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
 
 class CloseConversationBot extends Agent {
 
@@ -65,10 +67,19 @@ class CloseConversationBot extends Agent {
         this.reconnect(); // regenerate token for reasons of authorization (data === 4401 || data === 4407)
     }
 
-    onConversationNotification(notificationBody) {
+     async onConversationNotification(notificationBody) {
         // console.log(JSON.stringify(notificationBody));
 
-        notificationBody.changes.forEach(change => {
+        notificationBody.changes.sort((a,b) => b.result.conversationDetails.startTs - a.result.conversationDetails.startTs);
+            //numbers.sort((a, b) => a - b);
+
+   
+        for (const change of notificationBody.changes) {
+            console.log(Date.now());
+            await sleep(500);
+            console.log(Date.now());
+
+        // notificationBody.changes.forEach(change => {
 
             // TODO: Check for skillIds which we are interested in...
             if (change.type === 'UPSERT') {
@@ -92,11 +103,15 @@ class CloseConversationBot extends Agent {
                         console.log('conversation resumed after being online');
                     }
                 }
-                this.onCloseConversation(change);
+                 this.onCloseConversation(change);
+          
             }
-        });
+        }
     }
-
+   async sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+      
     onNewConversation(change) {
         // create a conversation state object
         let conversation = {
@@ -109,7 +124,7 @@ class CloseConversationBot extends Agent {
         this.openConvs[change.result.convId] = conversation;
     }
 
-    onCloseConversation(change) {
+     onCloseConversation(change) {
         console.log(`closing: ${change.result.convId}`);
 
         this.updateConversationField({
